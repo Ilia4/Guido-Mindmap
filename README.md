@@ -1,200 +1,180 @@
-# MindMap
+<h1 align="center">🧠 MindMap</h1>
 
-Full-stack сервис визуальных досок (mind maps): проекты, карточки на бесконечном
-canvas, связи между ними, чек-листы, дедлайны, приоритеты, документы, шаринг досок
-между пользователями и уведомления в реальном времени.
+<p align="center">
+  <b>Full-stack сервис визуальных досок</b> — проекты, карточки на бесконечном canvas,
+  связи, чек-листы, дедлайны, приоритеты, документы, совместный доступ и уведомления в реальном времени.
+</p>
 
-**Стек:** React 19 + Vite + Tailwind (фронтенд), FastAPI + SQLAlchemy + MySQL (бэкенд),
-Telegram-бот на aiogram. Авторизация — через внешний сервис Guido.
-
-> **Контекст.** MindMap — один из сервисов внутренней платформы **Guido** (hub, где под
-> единой авторизацией собрано несколько инструментов). В этом репозитории выделен именно
-> MindMap. Общая оболочка хаба (роутинг, экран логина, шапка) и центральный auth-сервис
-> Guido сюда не входят — они описаны ниже как внешний контекст.
+<p align="center">
+  <img src="https://img.shields.io/badge/React-19-61DAFB?logo=react&logoColor=white" />
+  <img src="https://img.shields.io/badge/Vite-7-646CFF?logo=vite&logoColor=white" />
+  <img src="https://img.shields.io/badge/Tailwind_CSS-3-06B6D4?logo=tailwindcss&logoColor=white" />
+  <img src="https://img.shields.io/badge/FastAPI-0.128-009688?logo=fastapi&logoColor=white" />
+  <img src="https://img.shields.io/badge/Python-3.11+-3776AB?logo=python&logoColor=white" />
+  <img src="https://img.shields.io/badge/MySQL-8-4479A1?logo=mysql&logoColor=white" />
+  <img src="https://img.shields.io/badge/aiogram-3-2CA5E0?logo=telegram&logoColor=white" />
+</p>
 
 ---
 
-## Как это работает
+## ✨ О проекте
+
+**MindMap** — инструмент для планирования в виде интерактивных досок: раскладываешь идеи
+и задачи карточками на canvas, соединяешь их связями, ведёшь чек-листы, ставишь дедлайны
+и приоритеты, делишься досками с командой. Дедлайны и новые доступы прилетают в реальном
+времени.
+
+Это один из сервисов внутренней платформы **Guido** (hub инструментов под единой
+авторизацией). Здесь он выделен в самостоятельный проект: фронтенд, REST API, база данных
+и Telegram-бот.
+
+> 🛠️ **Что реализовано мной:** архитектура фронтенда и бэкенда, canvas-доска с drag&drop
+> и связями, система приоритетов и прогресса, шаринг досок, real-time уведомления через
+> Server-Sent Events, REST API на FastAPI с авто-созданием схемы БД и Telegram-бот для
+> ежедневной синхронизации задач.
+
+---
+
+## 🚀 Возможности
+
+- 🗂️ **Проекты и папки** — организация досок, закрепление, архивация, тёмная/светлая тема.
+- 🎯 **Canvas-доска** — карточки с координатами и размерами, связи между ними, drag&drop, зум и панорамирование.
+- ✅ **Задачи внутри карточек** — чек-листы, дедлайны, важность и срочность с расчётом приоритета.
+- 📎 **Документы** — прикрепление файлов и изображений к карточкам.
+- 👥 **Совместный доступ** — шаринг досок между пользователями с управлением правами.
+- 🔔 **Real-time уведомления** — дедлайны и новые доступы через Server-Sent Events (с fallback на polling).
+- 🤖 **Telegram-бот** — ежедневная синхронизация задач и интеграция с LLM.
+
+---
+
+## 🧩 Как это работает
 
 <!-- Сюда вставить сгенерированную схему архитектуры, например:
-![Архитектура MindMap](docs/architecture.png)
+<p align="center"><img src="docs/architecture.png" width="820" /></p>
 -->
 
-Кратко поток данных:
-
-1. Пользователь уже залогинен в оболочке Guido — она кладёт JWT-токен в `localStorage`.
-2. Фронтенд MindMap читает этот токен и шлёт запросы к API с заголовком
-   `Authorization: Bearer <token>`.
-3. Запросы идут через nginx (`/mindmap/*`) на backend — **FastAPI** на порту 8088.
-4. На каждый запрос API проверяет токен во внешнем auth-сервисе (`GET /auth/me`) и по id
-   пользователя работает с данными в **MySQL** (проекты, карточки, связи, документы…).
-5. Уведомления (дедлайны, новые доступы) прилетают на фронт по **SSE**-стриму.
-6. Отдельно **Telegram-бот** раз в день синхронизирует задачи и умеет дергать LLM.
+1. Пользователь залогинен в оболочке Guido — она кладёт JWT в `localStorage`.
+2. Фронтенд MindMap читает токен и шлёт запросы с `Authorization: Bearer <token>`.
+3. Запросы идут через nginx (`/mindmap/*`) на backend — **FastAPI** (порт 8088).
+4. API валидирует токен во внешнем auth-сервисе (`GET /auth/me`) и работает с **MySQL**.
+5. Уведомления приходят на фронт по **SSE**-стриму.
+6. **Telegram-бот** раз в день синхронизирует задачи и обращается к LLM.
 
 ---
 
-## Структура проекта
+## 🛠️ Технологии
+
+| Слой      | Стек                                                              |
+|-----------|-------------------------------------------------------------------|
+| Frontend  | React 19, Vite, Tailwind CSS, framer-motion, lucide-react         |
+| Backend   | FastAPI, Uvicorn, SQLAlchemy 2.0 (Core), PyMySQL                  |
+| База      | MySQL (схема создаётся автоматически при старте)                  |
+| Бот       | aiogram 3, APScheduler, SQLite                                    |
+| Auth      | Внешний сервис Guido (проверка Bearer-токена через `/auth/me`)    |
+
+---
+
+## 💡 Технические решения
+
+- **Разделение «список ↔ доска».** Два тяжёлых экрана вынесены в контейнеры
+  `MindmapPageContent` и `ProjectBoardContent`, которые держат состояние и сетевые вызовы,
+  а дочерние компоненты остаются presentational. Тяжёлая доска грузится только когда открыта.
+- **Чистая расчётная логика в `utils/`.** Приоритеты, прогресс, геометрия связей и
+  форматирование вынесены из компонентов в чистые функции — их легко тестировать и переиспользовать.
+- **Real-time через SSE.** Уведомления идут по Server-Sent Events с автоматическим
+  переподключением и fallback на polling — проще и легче, чем поднимать WebSocket-инфраструктуру.
+- **База без миграций.** API сам создаёт недостающие таблицы при старте
+  (`CREATE TABLE IF NOT EXISTS`) — минимум операционной возни при деплое компактного сервиса.
+- **Делегированная авторизация.** Сервис не хранит паролей — доверяет центральному
+  auth-сервису, что позволяет единому логину покрывать все инструменты платформы.
+
+---
+
+## 📁 Структура
 
 ```
 guido-mindmap/
-├── frontend/mindmap/     — код сервиса (встраивается в общий React-UI Guido)
+├── frontend/mindmap/          — React-код сервиса (встраивается в общий UI Guido)
+│   ├── MindmapPageContent.jsx     — витрина: проекты, папки, шаринг, уведомления
+│   ├── ProjectBoardContent.jsx    — доска: карточки, связи, документы, drag&drop
+│   ├── useMindmapHubNotifications.js — хук real-time уведомлений (SSE)
+│   ├── utils/                     — чистые функции (приоритеты, прогресс, геометрия)
+│   └── components/                — UI: common / projects / project-board / board-tree
 └── backend/
-    ├── mindmap-api/          — REST API (FastAPI + MySQL)
-    └── telegram-mindmap-bot/ — Telegram-бот синхронизации
+    ├── mindmap-api/               — REST API (FastAPI + MySQL), весь код в app.py
+    └── telegram-mindmap-bot/      — Telegram-бот синхронизации (aiogram)
 ```
 
----
+<details>
+<summary><b>📖 Подробное описание каждого файла</b></summary>
 
-## Frontend — `frontend/mindmap/`
+### Frontend — `frontend/mindmap/`
 
-Код именно сервиса MindMap, как он живёт внутри общего UI Guido. Это не отдельное
-приложение: точки входа (`main.jsx`, роутинг, логин) и Tailwind-сборка приходят из
-оболочки хаба. Внешние зависимости: `react`, `react-dom`, `lucide-react` (иконки),
-`framer-motion` (анимации модалок).
-
-### Точки входа и «умные» контейнеры
-
-| Файл | Что делает | Почему так |
-|------|------------|------------|
-| `MindmapPage.jsx` | Ре-экспорт `MindmapPageContent`. | Тонкая «публичная» точка входа: оболочка импортирует стабильное имя `MindmapPage`, а внутренняя реализация может меняться. |
-| `MindmapPageContent.jsx` | **Витрина проектов.** Список проектов и папок, закрепление, тема light/dark, CRUD проектов, архивация, управление доступами (шаринг), лента уведомлений. Здесь же все `fetch` к API проектов. | Главный контейнер уровня «список». Держит состояние и сетевые вызовы, чтобы дочерние компоненты оставались «глупыми» (presentational). |
-| `ProjectBoard.jsx` | Ре-экспорт `ProjectBoardContent`. | Та же схема «фасад → реализация», что и у `MindmapPage`. |
-| `ProjectBoardContent.jsx` | **Доска проекта.** Карточки на canvas (координаты + размеры), связи (рёбра), drag&drop, зум, чек-листы, дедлайны, прикрепление документов. Все `fetch` к API доски/карточек/документов. | Второй крупный контейнер уровня «доска». Разделение «список ↔ доска» держит каждый файл в разумных пределах и грузит тяжёлую доску только когда она открыта. |
-
-### Хук уведомлений
-
-| Файл | Что делает | Почему так |
-|------|------------|------------|
-| `useMindmapHubNotifications.js` | Считает дедлайны/доступы, слушает **SSE** (`/api/notifications/stream`), при обрыве — polling раз в 60 c. Хранит прочитанные в `localStorage`. | Вынесен в отдельный хук, потому что уведомления нужны и в колокольчике оболочки, и внутри сервиса — переиспользуемая логика без дублирования. |
-
-### Утилиты — `utils/`
-
-| Файл | Что делает | Почему так |
-|------|------------|------------|
-| `boardMetrics.js` | Метрики и подписи: важность/срочность (`IMPORTANCE_LABELS`, `URGENCY_LABELS`), расчёт приоритета задач, прогресс по дереву доски, сортировка. | Чистые функции без React — их удобно тестировать и переиспользовать в карточках, дереве и модалках. |
-| `mindmapPageUtils.js` | Хелперы витрины: генерация локальных id, форматирование дат, сбор задач по проектам (`collectProjectTasks`). | Отделяет «расчётную» логику списка проектов от рендера. |
-| `projectBoardUtils.js` | Хелперы доски: генерация id карточек, геометрия связей (`oppositeSide`), нормализация размеров карточек, `clamp`. | Геометрия и id-логика доски вынесены отдельно, чтобы не раздувать `ProjectBoardContent`. |
-
-### Общие UI-компоненты — `components/`
+Код сервиса, как он живёт внутри общего UI Guido (не отдельное приложение — точки входа,
+роутинг и логин приходят из оболочки). Внешние зависимости: `react`, `react-dom`,
+`lucide-react`, `framer-motion`.
 
 | Файл | Что делает |
 |------|------------|
-| `common/MindmapUi.jsx` | Базовые UI-примитивы сервиса: `IconBtn`, `Button`, `Modal`, `Pill`, `ConfirmTopSheet` (с поддержкой темы light/dark и анимаций framer-motion). Единый «дизайн-язык» mindmap. |
-| `AddCardModal.jsx` | Модалка создания карточки на доске. |
-| `CardDetailsModal.jsx` | Модалка деталей карточки: важность/срочность, чек-лист, дедлайн, цвет, картинки, вложения, архивация. |
-| `BoardCardShell.jsx` | Обёртка карточки на доске: позиционирование, определение стороны для связи, точки-«якоря» (+) для протягивания рёбер. |
-| `BoardCard.jsx` | Визуальная карточка: заголовок, приоритет, прогресс чек-листа, иконки вложений/дедлайна. |
-| `BoardEdges.jsx` | Отрисовка связей между карточками (SVG-кривые с учётом сторон/направлений). |
-| `BoardTreePanel.jsx` → `BoardTreePanelContent.jsx` | Боковая панель «дерево доски»: карточки и задачи списком, прогресс, сортировка по приоритету (фасад + реализация). |
+| `MindmapPage.jsx` | Тонкая точка входа — ре-экспорт `MindmapPageContent` (стабильное имя для оболочки). |
+| `MindmapPageContent.jsx` | Витрина проектов: список, папки, закрепление, тема, CRUD, архивация, шаринг, уведомления + все `fetch` к API проектов. |
+| `ProjectBoard.jsx` | Ре-экспорт `ProjectBoardContent` (фасад → реализация). |
+| `ProjectBoardContent.jsx` | Доска: карточки, связи, drag&drop, зум, чек-листы, дедлайны, документы + `fetch` доски/карточек. |
+| `useMindmapHubNotifications.js` | Хук уведомлений: считает дедлайны/доступы, слушает SSE, при обрыве — polling; прочитанные хранит в `localStorage`. |
 
-### Подпапки компонентов
-
-**`components/board-tree/`** — элементы панели-дерева:
+**`utils/`** — чистые функции:
 | Файл | Что делает |
 |------|------------|
-| `BoardCardTreeItem.jsx` | Строка карточки в дереве. |
-| `BoardTreeTaskItem.jsx` | Строка отдельной задачи (чек-лист-пункта). |
-| `BoardTreeProgressModal.jsx` | Модалка сводного прогресса по дереву. |
+| `boardMetrics.js` | Метрики и подписи важности/срочности, расчёт приоритета, прогресс по дереву, сортировка. |
+| `mindmapPageUtils.js` | Хелперы витрины: id, форматирование дат, сбор задач по проектам. |
+| `projectBoardUtils.js` | Хелперы доски: id карточек, геометрия связей, нормализация размеров. |
 
-**`components/project-board/`** — части экрана доски (разбит на куски для читаемости):
+**`components/`** — UI:
 | Файл | Что делает |
 |------|------------|
-| `ProjectBoardScene.jsx` | «Сцена» доски — собирает canvas, карточки и связи вместе. |
-| `BoardCanvas.jsx` | Сам canvas: панорамирование, зум, сетка. |
-| `BoardZoomControls.jsx` | Кнопки управления масштабом. |
-| `ProjectBoardHeader.jsx` | Шапка доски (название проекта, действия). |
-| `ProjectBoardSidebar.jsx` | Боковая панель доски. |
-| `ProjectBoardDialogs.jsx` | Набор диалогов/модалок доски в одном месте. |
+| `common/MindmapUi.jsx` | Базовые примитивы: `IconBtn`, `Button`, `Modal`, `Pill`, `ConfirmTopSheet` (темы + анимации). |
+| `AddCardModal.jsx` | Модалка создания карточки. |
+| `CardDetailsModal.jsx` | Детали карточки: приоритет, чек-лист, дедлайн, цвет, вложения, архивация. |
+| `BoardCardShell.jsx` | Обёртка карточки: позиционирование, точки-«якоря» для связей. |
+| `BoardCard.jsx` | Визуальная карточка: заголовок, приоритет, прогресс, иконки. |
+| `BoardEdges.jsx` | Отрисовка связей (SVG-кривые). |
+| `BoardTreePanel.jsx` / `BoardTreePanelContent.jsx` | Панель «дерево доски»: задачи списком, прогресс, сортировка. |
+| `board-tree/` | Элементы дерева: `BoardCardTreeItem`, `BoardTreeTaskItem`, `BoardTreeProgressModal`. |
+| `project-board/` | Части экрана доски: `ProjectBoardScene`, `BoardCanvas`, `BoardZoomControls`, `ProjectBoardHeader`, `ProjectBoardSidebar`, `ProjectBoardDialogs`. |
+| `projects/` | Элементы витрины: `ProjectCard`, `ProjectFormModal`, `ProjectAccessModal`, `TasksOverviewModal`, `KpiCard`. |
 
-**`components/projects/`** — элементы витрины проектов:
+### Backend — `backend/`
+
+**`mindmap-api/`**
 | Файл | Что делает |
 |------|------------|
-| `ProjectCard.jsx` | Карточка проекта в списке. |
-| `ProjectFormModal.jsx` | Создание/редактирование проекта. |
-| `ProjectAccessModal.jsx` | Управление доступами (шаринг проекта). |
-| `TasksOverviewModal.jsx` | Сводка задач по проекту. |
-| `KpiCard.jsx` | Плитка с метрикой (KPI) на витрине. |
+| `app.py` | Всё API (~2900 строк): подключение к MySQL, авто-создание таблиц, проверка токена (`/auth/me`), эндпоинты проектов/досок/карточек/документов/уведомлений (+ SSE), опц. синхронизация со старой версией. |
+| `.env.example` | Шаблон переменных (MySQL, auth-сервис, CORS, legacy-БД). |
 
-> **Почему так разбито.** Два тяжёлых экрана (список и доска) вынесены в контейнеры
-> `*Content.jsx`, вся расчётная логика — в `utils/` (чистые функции), а UI разложен по
-> папкам `common / projects / project-board / board-tree`. Это держит файлы небольшими,
-> убирает дублирование и позволяет переиспользовать примитивы.
+**`telegram-mindmap-bot/`**
+| Файл | Что делает |
+|------|------------|
+| `bot.py` | Точка входа: команды (`/start`, `/sync`, `/unsync`, `/status`) + планировщик (APScheduler). |
+| `config.py` | Загрузка конфигурации из `.env` в dataclass. |
+| `storage.py` | Локальное хранилище подписок (SQLite). |
+| `sync_service.py` | Ядро синхронизации: читает MySQL MindMap, формирует сводку. |
+| `guido_core_client.py` | Клиент auth-сервиса (связка Telegram ↔ пользователь). |
+| `llm_client.py` | Клиент LLM-моста. |
+| `requirements.txt` | Зависимости бота. |
+
+</details>
 
 ---
 
-## Backend — `backend/`
+## 🗄️ Модель данных (MySQL)
 
-### `mindmap-api/` — REST API
-
-| Файл | Что делает | Почему так |
-|------|------------|------------|
-| `app.py` | **Всё API в одном модуле (~2900 строк):** подключение к MySQL (SQLAlchemy Core + PyMySQL), автосоздание таблиц при старте (`_ensure_*`, идемпотентный `CREATE TABLE IF NOT EXISTS`), проверка токена во внешнем auth-сервисе (`_core_me` → `GET /auth/me`), все эндпоинты проектов/досок/карточек/документов/уведомлений (в т.ч. SSE-стрим), опциональная синхронизация со старой версией сервиса. | Один файл — осознанный компромисс: сервис компактный, без ORM-моделей и миграций (схема создаётся сама), что упрощает деплой. Разнесение на модули — очевидный следующий шаг рефакторинга. |
-| `.env.example` | Шаблон переменных окружения (доступ к MySQL, URL auth-сервиса, CORS, legacy-БД). | Реальный `.env` с паролями в репозиторий не коммитится. |
-| `README.md` | Детали бэкенда: модель данных, эндпоинты, запуск. | — |
-
-### `telegram-mindmap-bot/` — Telegram-бот
-
-Отдельный процесс: раз в день синхронизирует задачи между досками MindMap и Telegram,
-умеет обращаться к LLM. Стандартная библиотека для HTTP + `pymysql` + `httpx`.
-
-| Файл | Что делает |
-|------|------------|
-| `bot.py` | Точка входа: команды бота (`/start`, `/sync`, `/unsync`, `/status`), планировщик ежедневной синхронизации (APScheduler). |
-| `config.py` | Загрузка конфигурации из `.env` в типизированный dataclass (токен, адреса API/БД, расписание). |
-| `storage.py` | Локальное хранилище подписок в SQLite (какая группа/тема подписана на sync). |
-| `sync_service.py` | Ядро синхронизации: читает данные из MySQL MindMap, формирует сводку, обновляет состояние. |
-| `guido_core_client.py` | Клиент внешнего auth-сервиса Guido (связка Telegram-аккаунта с пользователем). |
-| `llm_client.py` | Клиент LLM-моста (отправка запросов к языковой модели). |
-| `requirements.txt` | Зависимости бота (`aiogram`, `APScheduler`, `pymysql`, `httpx`, `python-dotenv`). |
-| `.env.example` | Шаблон переменных (токен бота, адреса, секреты LLM). |
-| `README.md` | Описание команд и запуска бота. |
+Таблицы создаются автоматически при старте API:
+`users`, `projects`, `project_folders`, `project_shares`, `cards`, `connections`,
+`checklists`, `deadlines`, `documents`, `user_notifications`, `legacy_sync_state`.
 
 ---
 
-## Модель данных (MySQL)
-
-Таблицы создаются автоматически при старте API (функции `_ensure_*` в `app.py`) —
-отдельные миграции не нужны:
-
-| Таблица | Назначение |
-|---------|------------|
-| `users` | Локальные пользователи (маппинг на id из auth-сервиса). |
-| `projects` | Проекты (майндмапы). |
-| `project_folders` | Папки для группировки проектов. |
-| `project_shares` | Доступы к проекту (шаринг между пользователями). |
-| `cards` | Карточки на доске (координаты, размеры, приоритет). |
-| `connections` | Связи (рёбра) между карточками. |
-| `checklists` | Чек-листы / подзадачи внутри карточек. |
-| `deadlines` | Дедлайны. |
-| `documents` | Прикреплённые файлы/документы к карточкам. |
-| `user_notifications` | Уведомления (дедлайны, новые доступы). |
-| `legacy_sync_state` | Состояние синхронизации со старой версией сервиса. |
-
----
-
-## Основные эндпоинты API (`/api`)
-
-```
-GET    /health
-GET    /api/projects            GET /api/projects/me
-POST   /api/projects            PUT /api/projects/{id}    DELETE /api/projects/{id}
-POST   /api/projects/{id}/archive
-GET    /api/project-folders/me  POST /api/project-folders
-PUT    /api/project-folders/{id}  DELETE /api/project-folders/{id}
-GET    /api/projects/{id}/shares  POST /api/projects/{id}/shares
-DELETE /api/projects/{id}/shares/{userId}
-GET    /api/projects/{id}/board
-POST   /api/projects/{id}/cards  PUT /api/projects/{id}/cards/{cardId}
-DELETE /api/projects/{id}/cards/{cardId}
-POST   /api/projects/{id}/cards/{cardId}/documents
-DELETE /api/projects/{id}/cards/{cardId}/documents/{docId}
-GET    /api/notifications        POST /api/notifications/read
-GET    /api/notifications/stream   (Server-Sent Events)
-```
-
----
-
-## Запуск
+## ▶️ Запуск
 
 **Backend (API):**
 ```bash
@@ -214,14 +194,12 @@ cp .env.example .env
 python bot.py
 ```
 
-**Frontend:** модуль встраивается в React/Vite-оболочку Guido. Для работы нужны токен в
-`localStorage` (`guido_access_token`) и переменные окружения `VITE_API_MINDMAP_BASE`,
-`VITE_CORE_TOKEN_KEY`.
+**Frontend:** модуль встраивается в React/Vite-оболочку Guido. Нужны токен в `localStorage`
+(`guido_access_token`) и переменные `VITE_API_MINDMAP_BASE`, `VITE_CORE_TOKEN_KEY`.
 
 ---
 
-## Безопасность
+## 🔐 Безопасность
 
-`.env`, `*.sqlite3` и виртуальные окружения исключены через `.gitignore` — реальные
-секреты (пароли БД, токен бота) в репозиторий не попадают; значения берутся из
-`.env.example`. В продакшене стоит ограничивать `CORS_ORIGINS` вместо `*`.
+`.env`, `*.sqlite3` и виртуальные окружения исключены через `.gitignore` — реальные секреты
+в репозиторий не попадают, значения берутся из `.env.example`.
