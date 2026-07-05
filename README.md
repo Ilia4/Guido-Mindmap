@@ -60,6 +60,17 @@
 5. Уведомления приходят на фронт по **SSE**-стриму.
 6. **Telegram-бот** раз в день синхронизирует задачи и обращается к LLM.
 
+<details>
+  <summary><b>Показать схему проекта</b></summary>
+
+<br>
+
+<p align="center">
+  <img src="docs/mindmap-architecture.png" alt="HH.ru automation project scheme" width="100%">
+</p>
+
+</details>
+
 ---
 
 ## 🛠️ Технологии
