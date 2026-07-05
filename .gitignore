@@ -1,0 +1,23 @@
+# Секреты и окружения
+.env
+*.env.local
+.venv/
+venv/
+
+# Данные
+*.sqlite3
+
+# Python
+__pycache__/
+*.pyc
+*.pyo
+
+# Node / frontend
+node_modules/
+dist/
+
+# Бэкапы
+*.bak
+*.bak-*
+*.bak.*
+backups/
